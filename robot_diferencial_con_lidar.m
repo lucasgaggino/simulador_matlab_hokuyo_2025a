@@ -10,7 +10,7 @@ addpath('navigation_functions');
 verMatlab= ver('MATLAB');       % en MATLAB2020a funciona bien, ajustado para R2016b, los demas a pelearla...
 
 ubicado = false;                %poner en true cuando el robot haya terminado la parte de ubicarse
-num_particles = 20;            %cantidad de particulas en el filtro
+num_particles = 70;            %cantidad de particulas en el filtro
 simular_ruido_lidar = false;    %simula datos no validos del lidar real, probar si se la banca
 use_roomba=false;               % false para desarrollar usando el simulador, true para conectarse al robot real
 
@@ -79,7 +79,7 @@ attachLidarSensor(viz,lidar);
 
 %% Parametros de la Simulacion
 
-simulationDuration = 60*100; %3*60;     % Duracion total [s]
+simulationDuration = 60*3; %3*60;     % Duracion total [s]
 sampleTime = 0.1;                   % Sample time [s]
 initPose = [4; 4; pi/2];           % Pose inicial (x y theta) del robot simulado (el robot puede arrancar en cualquier lugar valido del mapa)
                                     %  probar iniciar el robot en distintos lugares                                  
@@ -203,7 +203,7 @@ for idx = 2:numel(tVec)
     %viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
-    plotearParticulas(particles,pose(:,idx),map)
+    plotearParticulas(particles,pose(:,idx),map,idx)
     %waitfor(r);
 end
 %imse para error cuadratico medio

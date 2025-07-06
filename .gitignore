@@ -1,0 +1,5 @@
+# Ignore all contents of the imgs directory (generated simulation frames)
+imgs/*
+
+# Keep the imgs directory itself but ignore its contents
+!imgs/.gitkeep
