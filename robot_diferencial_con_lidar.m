@@ -10,7 +10,7 @@ addpath('navigation_functions');
 verMatlab= ver('MATLAB');       % en MATLAB2020a funciona bien, ajustado para R2016b, los demas a pelearla...
 
 ubicado = false;                %poner en true cuando el robot haya terminado la parte de ubicarse
-num_particles = 50;            %cantidad de particulas en el filtro (aumentado de 20 a 50)
+num_particles = 20;            %cantidad de particulas en el filtro
 simular_ruido_lidar = false;    %simula datos no validos del lidar real, probar si se la banca
 use_roomba=false;               % false para desarrollar usando el simulador, true para conectarse al robot real
 
@@ -191,17 +191,10 @@ for idx = 2:numel(tVec)
         particles = resampleParticles(particles, map);
 
         % Opcional: Mostrar informacion de debug del estado actual
-        if mod(idx, 50) == 0  % Mostrar cada 5 segundos
-            % Calcular estadísticas de pesos
-            weights = particles(4,:);
-            max_weight = max(weights);
-            min_weight = min(weights);
-            mean_weight = mean(weights);
-            Neff = 1 / sum(weights.^2);
-            
-            fprintf('Tiempo: %.1fs, Neff: %.1f, Max_w: %.2e, Min_w: %.2e, Mean_w: %.2e\n', ...
-                    tVec(idx), Neff, max_weight, min_weight, mean_weight);
-        end
+%         if mod(idx, 50) == 0  % Mostrar cada 5 segundos
+%             fprintf('Tiempo: %.1fs, Estado: %s, Pose: [%.2f, %.2f, %.2f]\n', ...
+%                     tVec(idx), current_state, pose(1,idx), pose(2,idx), pose(3,idx));
+%         end
         
         % Fin del COMPLETAR ACA
         
