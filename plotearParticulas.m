@@ -1,9 +1,22 @@
-function [] = plotearParticulas(particles,pose, map, frame_num)
+function [] = plotearParticulas(particles,pose, map, frame_num, save_fig)
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
+%   save_fig: boolean - true to save figures invisibly, false to display them
 
-% Create invisible figure to avoid displaying
-fig = figure('Visible', 'off');
+% Handle optional parameters
+if nargin < 5
+    save_fig = false; % Default to showing figures (not saving)
+end
+if nargin < 4
+    frame_num = 1; % Default frame number if not provided
+end
+
+% Create figure - invisible if saving, visible if displaying
+if save_fig
+    fig = figure('Visible', 'off');
+else
+    fig = figure(2); % Use figure 2 for display as before
+end
 
 % Display the map as underlay in grayscale
 show(map)
@@ -52,19 +65,17 @@ end
 
 hold off
 
-% Save figure to imgs folder
-if nargin < 4
-    frame_num = 1; % Default frame number if not provided
+% Save figure if requested, otherwise just display
+if save_fig
+    % Create filename with zero-padded frame number
+    filename = sprintf('imgs/frame_%04d.png', frame_num);
+    
+    % Save the figure
+    saveas(fig, filename, 'png');
+    
+    % Close the figure to save memory
+    close(fig);
 end
-
-% Create filename with zero-padded frame number
-filename = sprintf('imgs/frame_%04d.png', frame_num);
-
-% Save the figure
-saveas(fig, filename, 'png');
-
-% Close the figure to save memory
-close(fig);
 
 %xlim([0 10])
 %ylim([0 10])

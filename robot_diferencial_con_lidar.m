@@ -203,7 +203,7 @@ for idx = 2:numel(tVec)
     %viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
-    plotearParticulas(particles,pose(:,idx),map,idx)
+    plotearParticulas(particles,pose(:,idx),map,idx,false)  % true = save figures, false = display figures
     %waitfor(r);
 end
 %imse para error cuadratico medio

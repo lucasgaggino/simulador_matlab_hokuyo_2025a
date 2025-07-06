@@ -11,8 +11,8 @@ function resampled = resampleParticles(particles, map)
     idx = arrayfun(@(ui) find(cdf>=ui,1), u);
     resampled = particles(:, idx);
 
-    % 2) rejuvenecimiento aumentado (20%)
-    alpha = 0.2;
+    % 2) rejuvenecimiento aumentado (10%)
+    alpha = 0.1;
     M     = round(alpha * N);
     for k = 1:M
         resampled(:, N-M+k) = generar_particula(map);
