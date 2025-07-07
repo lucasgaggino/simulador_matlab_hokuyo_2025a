@@ -7,6 +7,9 @@ clear
 % Agregar carpeta de funciones de navegacion al path
 addpath('navigation_functions');
 
+% Agregar carpeta de funciones de localizacion al path
+addpath('localization_pf');
+
 verMatlab= ver('MATLAB');       % en MATLAB2020a funciona bien, ajustado para R2016b, los demas a pelearla...
 
 ubicado = false;                %poner en true cuando el robot haya terminado la parte de ubicarse
@@ -200,10 +203,10 @@ for idx = 2:numel(tVec)
         
     %%
     % actualizar visualizacion
-    %viz(pose(:,idx),ranges)
+    viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
-    plotearParticulas(particles,pose(:,idx),map,idx,false)  % true = save figures, false = display figures
+    %plotearParticulas(particles,pose(:,idx),map,idx,false)  % true = save figures, false = display figures
     %waitfor(r);
 end
 %imse para error cuadratico medio
