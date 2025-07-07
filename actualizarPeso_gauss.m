@@ -33,14 +33,14 @@ function particles = actualizarPeso_gauss(particles, lidar, ranges, map)
         end
         
         % 3) Lecturas predichas y real ? verosimilitud Gaussiana
-        z_hat = double(lidar([x; y; th]));  % M�1
+        z_hat = double(lidar([x; y; th]));  
         valid = ~isnan(ranges) & ~isnan(z_hat);
         K = nnz(valid);
         if K == 0
-            weights(i) = eps;  % si no hay datos v�lidos
+            weights(i) = eps;  % si no hay datos validos
         else
             d = ranges(valid) - z_hat(valid);
-            % C�lculo en log-space para evitar underflow num�rico
+            % Calculo en log-space para evitar underflow numerico
             log_coef = -K * log(sqrt(2*pi)*sigma);
             log_expo = -sum(d.^2)/(2*sigma^2);
             log_weight = log_coef + log_expo;

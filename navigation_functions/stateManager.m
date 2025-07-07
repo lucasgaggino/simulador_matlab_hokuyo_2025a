@@ -8,7 +8,7 @@ function [v_cmd, w_cmd, current_state] = stateManager(ranges, current_state, mai
     forward_velocity = 0.12;       % Velocidad de avance
     turn_velocity = 0.4;          % Velocidad angular de giro
     backup_velocity = -0.08;      % Velocidad de retroceso
-    localization_turn_velocity = 0.3; % Velocidad angular para localizacion inicial
+    localization_turn_velocity = 0.5; % Velocidad angular para localizacion inicial
     
     % Parametros de tiempo para localizacion inicial
     localization_duration = 30.0;  % Duracion en segundos para girar en el lugar
