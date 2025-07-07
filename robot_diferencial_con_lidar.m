@@ -10,7 +10,7 @@ addpath('navigation_functions');
 verMatlab= ver('MATLAB');       % en MATLAB2020a funciona bien, ajustado para R2016b, los demas a pelearla...
 
 ubicado = false;                %poner en true cuando el robot haya terminado la parte de ubicarse
-num_particles = 70;            %cantidad de particulas en el filtro
+num_particles = 50;            %cantidad de particulas en el filtro
 simular_ruido_lidar = false;    %simula datos no validos del lidar real, probar si se la banca
 use_roomba=false;               % false para desarrollar usando el simulador, true para conectarse al robot real
 

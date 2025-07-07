@@ -1,6 +1,6 @@
 function [v_cmd, w_cmd, current_state] = stateManager(ranges, current_state, main_loop_index)
     % Maquina de estados para navegacion libre de choques
-    % Estados: 'FORWARD', 'TURN_LEFT', 'TURN_RIGHT', 'BACKUP'
+    % Estados: 'LOCALIZATION', 'FORWARD', 'TURN_LEFT', 'TURN_RIGHT', 'BACKUP'
     
     % Parametros de configuracion
     min_distance_threshold = 0.8;  % Distancia minima para detectar obstaculo
@@ -8,13 +8,26 @@ function [v_cmd, w_cmd, current_state] = stateManager(ranges, current_state, mai
     forward_velocity = 0.12;       % Velocidad de avance
     turn_velocity = 0.4;          % Velocidad angular de giro
     backup_velocity = -0.08;      % Velocidad de retroceso
+    localization_turn_velocity = 0.3; % Velocidad angular para localizacion inicial
+    
+    % Parametros de tiempo para localizacion inicial
+    localization_duration = 30.0;  % Duracion en segundos para girar en el lugar
+    sample_time = 0.1;             % Tiempo de muestreo (debe coincidir con el del script principal)
+    localization_steps = localization_duration / sample_time; % Numero de pasos para localizacion
     
     v_max = 0.15;
     w_max= 0.5;
     
+    % Variables persistentes para mantener el contador de localizacion
+    persistent localization_counter;
+    if isempty(localization_counter)
+        localization_counter = 0;
+    end
+    
     % Inicializar estado si es necesario
     if isempty(current_state)
-        current_state = 'FORWARD';
+        current_state = 'LOCALIZATION';
+        localization_counter = 0;
     end
     
     % Analizar obstaculos en diferentes sectores del lidar
@@ -26,6 +39,26 @@ function [v_cmd, w_cmd, current_state] = stateManager(ranges, current_state, mai
     
     % Logica de la maquina de estados
     switch current_state
+        case 'LOCALIZATION'
+            % Estado inicial: girar en el lugar para ayudar a la localizacion
+            localization_counter = localization_counter + 1;
+            
+            if localization_counter >= localization_steps
+                % Terminar localizacion y comenzar navegacion normal
+                current_state = 'FORWARD';
+                v_cmd = forward_velocity;
+                w_cmd = 0;
+                fprintf('Localizacion inicial completada. Iniciando navegacion normal.\n');
+            else
+                % Continuar girando en el lugar
+                v_cmd = 0;
+                w_cmd = localization_turn_velocity;
+                if mod(localization_counter, 10) == 0  % Mostrar progreso cada segundo
+                    fprintf('Localizacion inicial: %.1f/%.1f segundos\n', ...
+                            localization_counter * sample_time, localization_duration);
+                end
+            end
+            
         case 'FORWARD'
             if critical_front
                 current_state = 'BACKUP';
