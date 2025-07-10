@@ -10,6 +10,9 @@ addpath('navigation_functions');
 % Agregar carpeta de funciones de localizacion al path
 addpath('localization_pf');
 
+% Agregar carpeta de funciones de localizacion NDT al path
+addpath('localization_ndt');
+
 verMatlab= ver('MATLAB');       % en MATLAB2020a funciona bien, ajustado para R2016b, los demas a pelearla...
 
 ubicado = false;                %poner en true cuando el robot haya terminado la parte de ubicarse
@@ -63,6 +66,12 @@ for i=1:num_particles
     particles=[particles,generar_particula(map)];
 end
 fprintf("Generando %d particulas \n",num_particles)
+
+%% NDT Localization variables (for testing)
+use_ndt = false;           % Set to true to enable NDT localization (for testing)
+ndt_pose = [];             % NDT pose estimate
+ndt_sigma = eye(3)*0.1;    % NDT uncertainty
+ndt_success = false;       % NDT success flag
 
 %% Crear sensor lidar en simulador
 lidar = LidarSensor;
@@ -182,22 +191,35 @@ for idx = 2:numel(tVec)
     
     %% COMPLETAR ACA:
         
-        velB = [v;0;w]; % velocidades en la terna del robot [vx;vy;w]
-        vel = bodyToWorld(velB,particles(1:3,:)); 
-        %actualizo pose de particulas
-        
-        particles(1:3,:)=particles(1:3,:)+vel*sampleTime;
-        %actualizo el peso de las particulas
-        particles=actualizarPeso_gauss(particles,lidar,ranges,map);
-        
-        %remuestreo
-        particles = resampleParticles(particles, map);
+        if use_ndt
+            % NDT Localization (for testing)
+            [ndt_pose, ndt_sigma, ndt_success] = ndt_localize(ranges, lidar.scanAngles, pose(:,idx), map);
+            if ndt_success
+                pose(:,idx) = ndt_pose;  % Update pose with NDT result
+                if mod(idx, 50) == 0  % Print every 5 seconds
+                    fprintf('NDT: [%.2f, %.2f, %.1f°], σ=%.3f m\n', ...
+                        pose(1,idx), pose(2,idx), rad2deg(pose(3,idx)), sqrt(ndt_sigma(1,1)));
+                end
+            end
+        else
+            % Original particle filter code
+            velB = [v;0;w]; % velocidades en la terna del robot [vx;vy;w]
+            vel = bodyToWorld(velB,particles(1:3,:)); 
+            %actualizo pose de particulas
+            
+            particles(1:3,:)=particles(1:3,:)+vel*sampleTime;
+            %actualizo el peso de las particulas
+            particles=actualizarPeso_gauss(particles,lidar,ranges,map);
+            
+            %remuestreo
+            particles = resampleParticles(particles, map);
 
-        % Opcional: Mostrar informacion de debug del estado actual
-%         if mod(idx, 50) == 0  % Mostrar cada 5 segundos
-%             fprintf('Tiempo: %.1fs, Estado: %s, Pose: [%.2f, %.2f, %.2f]\n', ...
-%                     tVec(idx), current_state, pose(1,idx), pose(2,idx), pose(3,idx));
-%         end
+            % Opcional: Mostrar informacion de debug del estado actual
+%             if mod(idx, 50) == 0  % Mostrar cada 5 segundos
+%                 fprintf('Tiempo: %.1fs, Estado: %s, Pose: [%.2f, %.2f, %.2f]\n', ...
+%                         tVec(idx), current_state, pose(1,idx), pose(2,idx), pose(3,idx));
+%             end
+        end
         
         % Fin del COMPLETAR ACA
         
@@ -206,7 +228,22 @@ for idx = 2:numel(tVec)
     %viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
-    plotearParticulas(particles,pose(:,idx),map,idx,false)  % true = save figures, false = display figures
+    if use_ndt
+        % Optional: Simple NDT visualization
+        if mod(idx, 20) == 0  % Update every 2 seconds
+            figure(1); clf; 
+            show(map); hold on;
+            plot(pose(1,idx), pose(2,idx), 'go', 'MarkerSize', 8, 'LineWidth', 2);
+            % Plot orientation arrow
+            arrow_length = 0.3;
+            plot([pose(1,idx), pose(1,idx) + arrow_length*cos(pose(3,idx))], ...
+                 [pose(2,idx), pose(2,idx) + arrow_length*sin(pose(3,idx))], 'g-', 'LineWidth', 3);
+            title(sprintf('NDT Localization - Time: %.1fs', tVec(idx)));
+            drawnow;
+        end
+    else
+        plotearParticulas(particles,pose(:,idx),map,idx,false)  % true = save figures, false = display figures
+    end
     %waitfor(r);
 end
 %imse para error cuadratico medio
