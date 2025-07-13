@@ -68,7 +68,7 @@ end
 %% Crear sensor lidar en simulador
 lidar = LidarSensor;
 lidar.sensorOffset = [0,0];     % Posicion del sensor en el robot (asumiendo mundo 2D)
-scaleFactor = 2;                %decimar lecturas de lidar acelera el algoritmo
+scaleFactor = 10;                %decimar lecturas de lidar acelera el algoritmo
 num_scans = 513/scaleFactor;
 hokuyo_step_a = deg2rad(-90);
 hokuyo_step_c = deg2rad(90);
@@ -106,7 +106,7 @@ prev_state_time = 0; % Tiempo del estado anterior
 
 %% Matchscan Localization variables
 use_matchscan = true;  % Enable matchscan localization
-mapPc = genPointCloudMap(map,20);
+mapPc = genPointCloudMap(map,10);
 
 %% Simulacion
 
@@ -117,7 +117,6 @@ else
 end
 
 angles = lidar.scanAngles;
-
 for idx = 2:numel(tVec)   
 
     % Generar aqui criteriosamente velocidades lineales v_cmd y angulares w_cmd
@@ -195,12 +194,12 @@ for idx = 2:numel(tVec)
         
 
     % actualizar visualizacion
-    viz(pose(:,idx),ranges)
+    %viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
-    %scan  = lidarScan(ranges,angles);
-    %plotPC(mapPc,estimated_pose,pose(:,idx),scan,stats);
-    %plotearParticulas([estimated_pose 1]',pose(:,idx),map,idx,false)  % true = save figures, false = display figures
+
+    plotPC(mapPc,estimated_pose,
+    plotearParticulas([estimated_pose 1]',pose(:,idx),map,idx,false)  % true = save figures, false = display figures
     end
     %waitfor(r);
 end
