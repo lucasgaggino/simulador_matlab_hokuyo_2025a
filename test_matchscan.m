@@ -49,15 +49,19 @@ attachLidarSensor(viz,lidar);
 %% Crear Nube de puntos del mapa
 
 bin_map  = map.occupancyMatrix > map.OccupiedThreshold;
-[X,Y] = find(bin_map);
-X = (map.GridSize(1)-X)/map.Resolution;
-Y = Y / map.Resolution;
+[Y,X] = find(bin_map);
+X = X/map.Resolution;
+Y = (map.GridSize(2)- Y)  / map.Resolution;
 mapCartPC = [X,Y];
-mapCartPC = downsample(mapCartPC,5);
+mapCartPC = downsample(mapCartPC,10);
 
 
 mapPC = lidarScan(mapCartPC);
+%plot(mapPC.Cartesian(:,1),mapPC.Cartesian(:,2),'.')
 plot(mapPC)
+pause(1)
+figure
+show(map)
 pause(1)
 
 
@@ -88,7 +92,7 @@ for i = 1:size(test_poses, 1)
     ranges_noisy = double(lidar(noisyPose));
     scan_noisy = lidarScan(ranges_noisy,angles);
     
-    relPose = matchScansGrid(scan_noisy,mapPC,'InitialPose',truePose);
+    [relPose,stats] = matchScansGrid(scan_noisy,mapPC,'InitialPose',truePose);
     scan2Tformed = transformScan(scan_noisy,relPose);
 
     R =rotz(relPose(3));
@@ -99,6 +103,7 @@ for i = 1:size(test_poses, 1)
     error_pose = truePose - noisyPose;
     error_pose_corrected = truePose - correctedPose;
     
+    figure(1)
     plot(mapPC)
     hold on
     plot(scan_noisy)
@@ -119,10 +124,10 @@ for i = 1:size(test_poses, 1)
     fprintf('Angle error before: %.2f°\n', rad2deg(abs(error_pose(3))));
     fprintf('Angle error after: %.2f°\n', rad2deg(abs(error_pose_corrected(3))));
     
-    pause(5)
+
     figure(2)
-    viz(pose(:,idx),ranges)
-    
+    viz(truePose,ranges)
+    pause(1)
     
 end
 
