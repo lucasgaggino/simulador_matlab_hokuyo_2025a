@@ -13,7 +13,7 @@ start= [2 2];
 goal = [5 4];
 planner = robotics.PRM(bmap) ;
 controller  = robotics.PurePursuit;
-controller.LookaheadDistance = 0.3;
+controller.LookaheadDistance = 0.5;
 controller.DesiredLinearVelocity = 0.1;
 controller.MaxAngularVelocity =  0.5;
 

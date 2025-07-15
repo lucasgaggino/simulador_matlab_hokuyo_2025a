@@ -70,12 +70,14 @@ end
 %% Controller
 
 
-max_linear_velocity = 0.1;    % m/s
-max_angular_velocity = 0.5;   % rad/s
+max_linear_velocity = 0.5;    % m/s
+max_angular_velocity = 1.0;   % rad/s
 waypoint_distance_threshold = 0.2; % m
 waypoints = [];
 controller = SimpleController(waypoints, max_linear_velocity, max_angular_velocity, waypoint_distance_threshold);
-
+controller.LookaheadDistance = 0.3;
+controller.DesiredLinearVelocity = 0.1;
+controller.MaxAngularVelocity =  0.5;
 
 
 
@@ -133,9 +135,9 @@ end
 angles = lidar.scanAngles;
 
 
-goal = [2.2 6];
+goal = [5 4];
 xy = findpath(planner,initPose(1:2)',goal);
-controller.waypoints = xy;
+controller.Waypoints = xy;
 
 for idx = 2:numel(tVec)   
 
@@ -155,7 +157,7 @@ for idx = 2:numel(tVec)
                 case 'LOCALIZATION'
                     [v_cmd, w_cmd, current_state] = stateManager(ranges, current_state, idx);
                 otherwise
-                    [v_cmd,w_cmd] = controller.getVelocities(pose(:,idx-1));
+                    [v_cmd,w_cmd] = controller (pose(:,idx-1));
             end
         end
         % fin del COMPLETAR ACA
@@ -217,7 +219,7 @@ for idx = 2:numel(tVec)
         
 
     % actualizar visualizacion
-    viz(pose(:,idx),ranges)
+    %viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
     %scan  = lidarScan(ranges,angles);
