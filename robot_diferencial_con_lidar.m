@@ -106,7 +106,7 @@ prev_state_time = 0; % Tiempo del estado anterior
 
 %% Matchscan Localization variables
 use_matchscan = true;  % Enable matchscan localization
-mapPc = genPointCloudMap(map,20);
+mapPc = genPointCloudMap(map,1);
 
 %% Simulacion
 
@@ -195,12 +195,12 @@ for idx = 2:numel(tVec)
         
 
     % actualizar visualizacion
-    viz(pose(:,idx),ranges)
+    %viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
-    %scan  = lidarScan(ranges,angles);
-    %plotPC(mapPc,estimated_pose,pose(:,idx),scan,stats);
-    %plotearParticulas([estimated_pose 1]',pose(:,idx),map,idx,false)  % true = save figures, false = display figures
+    scan  = lidarScan(ranges,angles);
+    plotPC(mapPc,estimated_pose,pose(:,idx),scan,stats);
+    plotearParticulas([estimated_pose 1]',pose(:,idx),map,idx,false)  % true = save figures, false = display figures
     end
     %waitfor(r);
 end

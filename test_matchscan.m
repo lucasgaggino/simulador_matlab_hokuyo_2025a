@@ -18,6 +18,7 @@ if verMatlab.Release=='(R2016b)'
 elseif verMatlab.Release(1:5)=='(R201'
     imagen_mapa = 1-double(imread('imagen_mapa_viejo.tiff'))/255;
     map = robotics.OccupancyGrid(imagen_mapa, 25);
+    bmap = robotics.BinaryOccupancyGrid(imagen_mapa,25);
 else
     % Try loading from mat file first
     if exist('mapa_fiuba_1p.mat', 'file')

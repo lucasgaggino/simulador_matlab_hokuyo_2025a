@@ -1,0 +1,21 @@
+clear
+close all
+imagen_mapa = 1-double(imread('imagen_mapa_viejo.tiff'))/255;
+map = robotics.OccupancyGrid(imagen_mapa, 25);
+bmap = robotics.BinaryOccupancyGrid(imagen_mapa,25);
+
+
+
+figure
+subplot(1,2,1)
+show(bmap)
+subplot(1,2,2)
+bmap.inflate(0.1)
+show(bmap)
+
+
+start= [2 2];
+goal = 
+planner = robotics.PRM(bmap) ;
+
+xy = findpath(prm,start,goal);
