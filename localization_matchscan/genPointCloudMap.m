@@ -10,9 +10,9 @@ function [mapPC] = genPointCloudMap(map,downsampleFactor)
     mapPC = lidarScan(mapCartPC);
     
     
-    ptCloud = pcread('mapa.ply');
-    loc = ptCloud.Location(:,1:2);
-    mapPC = lidarScan(loc);
+    %ptCloud = pcread('mapa.ply');
+    %loc = ptCloud.Location(:,1:2);
+    %mapPC = lidarScan(loc);
     
 end
 

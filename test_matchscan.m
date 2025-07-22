@@ -16,7 +16,7 @@ if verMatlab.Release=='(R2016b)'
     imagen_mapa = 1-double(imread('mapa_fiuba_1p.tiff'))/255;
     map = robotics.OccupancyGrid(imagen_mapa, 25);
 elseif verMatlab.Release(1:5)=='(R201'
-    imagen_mapa = 1-double(imread('imagen_mapa_viejo.tiff'))/255;
+    imagen_mapa = 1-double(imread('mapa_fiuba_1er_piso.tiff'))/255;
     map = robotics.OccupancyGrid(imagen_mapa, 25);
     bmap = robotics.BinaryOccupancyGrid(imagen_mapa,25);
 else

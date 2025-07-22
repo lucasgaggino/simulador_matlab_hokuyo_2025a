@@ -56,7 +56,7 @@ if verMatlab.Release=='(R2016b)'
 elseif verMatlab.Release(1:5)=='(R201'    % Completar con la version que tengan
     %Ni idea que pasa, ver si el truco R2016b funciona
     disp('ver si la compatibilidad R2016b funciona');
-    imagen_mapa = 1-double(imread('imagen_mapa_viejo.tiff'))/255;
+    imagen_mapa = 1-double(imread('mapa_fiuba_1p.tiff'))/255;
     map = robotics.OccupancyGrid(imagen_mapa, 25);
     bmap = robotics.BinaryOccupancyGrid(imagen_mapa,25);
     bmap.inflate(0.2)
@@ -99,7 +99,7 @@ attachLidarSensor(viz,lidar);
 
 simulationDuration = 60*3; %3*60;     % Duracion total [s]
 sampleTime = 0.1;                   % Sample time [s]
-initPose = [2; 2; pi/2];           % Pose inicial (x y theta) del robot simulado (el robot puede arrancar en cualquier lugar valido del mapa)
+initPose = [8; 8; pi/2];           % Pose inicial (x y theta) del robot simulado (el robot puede arrancar en cualquier lugar valido del mapa)
                                     %  probar iniciar el robot en distintos lugares                                  
                                   
 % Inicializar vectores de tiempo:1010
@@ -121,6 +121,7 @@ prev_state_time = 0; % Tiempo del estado anterior
 %% Matchscan Localization variables
 use_matchscan = true;  % Enable matchscan localization
 mapPc = genPointCloudMap(map,1);
+mapPc = genPointCloudMapPC(map,lidar);
 
 %% Simulacion
 
@@ -133,7 +134,7 @@ end
 angles = lidar.scanAngles;
 
 
-goal = [2.2 6];
+goal = [9 19];
 xy = findpath(planner,initPose(1:2)',goal);
 controller.waypoints = xy;
 
