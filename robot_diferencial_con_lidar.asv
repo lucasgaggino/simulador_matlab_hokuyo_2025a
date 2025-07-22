@@ -156,6 +156,7 @@ for idx = 2:numel(tVec)
                 case 'LOCALIZATION'
                     [v_cmd, w_cmd, current_state] = stateManager(ranges, current_state, idx);
                 otherwise
+                    
                     [v_cmd,w_cmd] = controller.getVelocities(estimated_pose);
             end
         end
