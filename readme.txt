@@ -8,3 +8,6 @@ El script debe usarse como template para desarrollar el trabajo ya que luego cam
 Tener en cuenta que nuevas versiones de este simulador pueden llegar a ser publicadas por lo que se recomienda el uso modular que permita actualizar el simulador facilmente.
 
 IM
+
+
+ffmpeg -framerate 30 -i "frame_%04d.png" -vf "scale=876:656" -c:v libx264 -pix_fmt yuv420p output.mp4

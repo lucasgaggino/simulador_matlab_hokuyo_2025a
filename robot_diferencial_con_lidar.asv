@@ -59,7 +59,7 @@ elseif verMatlab.Release(1:5)=='(R201'    % Completar con la version que tengan
     imagen_mapa = 1-double(imread('mapa_fiuba_1p.tiff'))/255;
     map = robotics.OccupancyGrid(imagen_mapa, 25);
     bmap = robotics.BinaryOccupancyGrid(imagen_mapa,25);
-    bmap.inflate(0.2)
+    bmap.inflate(0.25)
     
     planner = robotics.PRM(bmap) ;
 
@@ -99,8 +99,9 @@ attachLidarSensor(viz,lidar);
 
 simulationDuration = 60*3; %3*60;     % Duracion total [s]
 sampleTime = 0.1;                   % Sample time [s]
-initPose = [8; 8; pi/2];           % Pose inicial (x y theta) del robot simulado (el robot puede arrancar en cualquier lugar valido del mapa)
-                                    %  probar iniciar el robot en distintos lugares                                  
+initPose = [7.4; 4.4; pi/6];           % Pose inicial (x y theta) del robot simulado (el robot puede arrancar en cualquier lugar valido del mapa)
+
+goal = [9 19]; %Objetivo a donde se queire llegar
                                   
 % Inicializar vectores de tiempo:1010
 tVec = 0:sampleTime:simulationDuration;         % Vector de Tiempo para duracion total
@@ -134,7 +135,7 @@ end
 angles = lidar.scanAngles;
 
 
-goal = [9 19];
+
 xy = findpath(planner,initPose(1:2)',goal);
 controller.setWaypoints(xy);
 
@@ -156,7 +157,6 @@ for idx = 2:numel(tVec)
                 case 'LOCALIZATION'
                     [v_cmd, w_cmd, current_state] = stateManager(ranges, current_state, idx);
                 otherwise
-                    
                     [v_cmd,w_cmd] = controller.getVelocities(estimated_pose);
             end
         end
@@ -225,6 +225,7 @@ for idx = 2:numel(tVec)
     %scan  = lidarScan(ranges,angles);
     %plotPC(mapPc,estimated_pose,pose(:,idx),scan,stats);
     plotearParticulas([estimated_pose 1]',pose(:,idx),map,idx,false)  % true = save figures, false = display figures
+    plotearRobotmatchscans
     end
     %waitfor(r);
 end

@@ -59,7 +59,7 @@ elseif verMatlab.Release(1:5)=='(R201'    % Completar con la version que tengan
     imagen_mapa = 1-double(imread('mapa_fiuba_1p.tiff'))/255;
     map = robotics.OccupancyGrid(imagen_mapa, 25);
     bmap = robotics.BinaryOccupancyGrid(imagen_mapa,25);
-    bmap.inflate(0.2)
+    bmap.inflate(0.20)
     
     planner = robotics.PRM(bmap) ;
 
@@ -99,8 +99,9 @@ attachLidarSensor(viz,lidar);
 
 simulationDuration = 60*3; %3*60;     % Duracion total [s]
 sampleTime = 0.1;                   % Sample time [s]
-initPose = [8; 8; pi/2];           % Pose inicial (x y theta) del robot simulado (el robot puede arrancar en cualquier lugar valido del mapa)
-                                    %  probar iniciar el robot en distintos lugares                                  
+initPose = [13; 7.4; pi/4];           % Pose inicial (x y theta) del robot simulado (el robot puede arrancar en cualquier lugar valido del mapa)
+
+goal = [9 19]; %Objetivo a donde se queire llegar
                                   
 % Inicializar vectores de tiempo:1010
 tVec = 0:sampleTime:simulationDuration;         % Vector de Tiempo para duracion total
@@ -134,7 +135,7 @@ end
 angles = lidar.scanAngles;
 
 
-goal = [9 19];
+
 xy = findpath(planner,initPose(1:2)',goal);
 controller.setWaypoints(xy);
 
@@ -215,16 +216,24 @@ for idx = 2:numel(tVec)
     if use_matchscan
         [estimated_pose, stats] = matchscan_localize(ranges, lidar.scanAngles, pose(:,idx), mapPc,5);
 
-        
+        % Progress log every 10 frames
+        if mod(idx, 10) == 0
+            current_time = tVec(idx);
+            progress_percent = (current_time / simulationDuration) * 100;
+            fprintf('Frame %d: Time = %.2f s / %.2f s (%.1f%% complete)\n', ...
+                    idx, current_time, simulationDuration, progress_percent);
+        end
+
 
     % actualizar visualizacion
-    viz(pose(:,idx),ranges)
+    %viz(pose(:,idx),ranges)
     %solo para debugear voy a plotear las particulas
     %plotearMapa(map)
-    %scan  = lidarScan(ranges,angles);
+    scan  = lidarScan(ranges,angles);
     %plotPC(mapPc,estimated_pose,pose(:,idx),scan,stats);
-    plotearParticulas([estimated_pose 1]',pose(:,idx),map,idx,false)  % true = save figures, false = display figures
+    plotearRobotmatchscans([estimated_pose 1]',pose(:,idx),map,idx,true,planner,initPose(1:2),goal,mapPc,estimated_pose,scan,stats,ranges,pose)  % true = save figures, false = display figures
+
     end
     %waitfor(r);
 end
-%imse para error cuadratico medio
+
